@@ -1,0 +1,9 @@
+.DS_Store
+build/
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+DerivedData/
+.build/
+dist/
+PeekBoard.xcarchive
