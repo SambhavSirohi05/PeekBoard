@@ -7,26 +7,7 @@ struct PanelFooterView: View {
         VStack(spacing: 0) {
             Divider()
             
-            if !ax.isTrusted {
-                HStack {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundColor(.yellow)
-                    Text("Auto-paste unavailable")
-                        .font(.footnote)
-                    Spacer()
-                    Button("Fix This") {
-                        ax.openAccessibilitySettings()
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .foregroundColor(.accentColor)
-                    .font(.footnote)
-                }
-                .padding(.horizontal, 14)
-                .frame(height: 32)
-                .background(Color.yellow.opacity(0.1))
-                
-                Divider()
-            }
+
             
             HStack {
                 Button(action: {

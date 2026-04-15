@@ -15,7 +15,7 @@ public struct PanelView: View {
                     .tracking(2)
                     .foregroundColor(.secondary)
                 Spacer()
-                Text("\\(totalItems) items")
+                Text("\(totalItems) items")
                     .font(.system(size: 10, design: .monospaced))
                     .foregroundColor(.secondary)
             }
