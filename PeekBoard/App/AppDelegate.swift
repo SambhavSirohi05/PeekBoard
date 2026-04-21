@@ -23,7 +23,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         ClipboardMonitor.shared.start()
         PanelController.shared.setup()
-        PrivacyManager.shared.setup()
         
         setupHotKey()
         
