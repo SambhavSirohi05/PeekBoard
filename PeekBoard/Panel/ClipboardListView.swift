@@ -8,6 +8,9 @@ struct ClipboardListView: View {
     @State private var selectedEntryId: Int64?
     @State private var pendingDeleteEntryId: Int64?
     
+    @State private var entryToRename: ClipboardEntry?
+    @State private var aliasInput: String = ""
+    
     let db = DatabaseManager.shared
     
     var allVisibleEntries: [ClipboardEntry] {
@@ -59,6 +62,7 @@ struct ClipboardListView: View {
                                     entry: entry, indexItem: nil,
                                     onPaste: { plain in PasteEngine.shared.paste(entry: entry, asPlainText: plain) },
                                     onPinToggle: { togglePin(entry) },
+                                    onRename: { startRename(entry) },
                                     onDelete: { defaultDelete(entry) }, onDeleteAllOfType: { deleteAll(entry.contentType) },
                                     selectedEntryId: $selectedEntryId
                                 )
@@ -76,6 +80,7 @@ struct ClipboardListView: View {
                                 entry: entry, indexItem: index < 9 ? index + 1 : nil,
                                 onPaste: { plain in PasteEngine.shared.paste(entry: entry, asPlainText: plain) },
                                 onPinToggle: { togglePin(entry) },
+                                onRename: { startRename(entry) },
                                 onDelete: { defaultDelete(entry) }, onDeleteAllOfType: { deleteAll(entry.contentType) },
                                 selectedEntryId: $selectedEntryId
                             )
@@ -124,6 +129,22 @@ struct ClipboardListView: View {
                     if let entry = allVisibleEntries.first(where: { $0.id == selectedEntryId }) {
                         handleKeyboardDelete(entry)
                     }
+                }
+                .alert("Set Alias", isPresented: Binding(
+                    get: { entryToRename != nil },
+                    set: { isPresented in if !isPresented { entryToRename = nil } }
+                )) {
+                    TextField("Alias", text: $aliasInput)
+                    Button("Save", action: commitRename)
+                    Button("Cancel", role: .cancel) { entryToRename = nil }
+                    if entryToRename?.alias != nil {
+                        Button("Remove Alias", role: .destructive) {
+                            aliasInput = ""
+                            commitRename()
+                        }
+                    }
+                } message: {
+                    Text("Enter a custom name for this item.")
                 }
             }
         }
@@ -212,5 +233,23 @@ struct ClipboardListView: View {
             try db.deleteEntries(ofType: type)
             loadData()
         } catch {}
+    }
+    
+    private func startRename(_ entry: ClipboardEntry) {
+        entryToRename = entry
+        aliasInput = entry.alias ?? ""
+    }
+    
+    private func commitRename() {
+        guard let entry = entryToRename else { return }
+        let newAlias = aliasInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        let finalAlias = newAlias.isEmpty ? nil : newAlias
+        do {
+            try db.updateAlias(entry, alias: finalAlias)
+            loadData()
+        } catch {
+            print("commitRename Error: \(error)")
+        }
+        entryToRename = nil
     }
 }

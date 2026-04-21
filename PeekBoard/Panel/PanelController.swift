@@ -1,8 +1,13 @@
 import Cocoa
 import SwiftUI
 
+public class PeekPanel: NSPanel {
+    public override var canBecomeKey: Bool { return true }
+}
+
 public final class PanelController: NSObject, NSWindowDelegate {
     public static let shared = PanelController()
+    public var isSearchActive: Bool = false
     
     public var panel: NSPanel!
     private var hostingView: NSHostingView<PanelView>!
@@ -13,7 +18,7 @@ public final class PanelController: NSObject, NSWindowDelegate {
     }
     
     public func setup() {
-        panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 340, height: 520),
+        panel = PeekPanel(contentRect: NSRect(x: 0, y: 0, width: 340, height: 520),
                         styleMask: [.borderless, .nonactivatingPanel],
                         backing: .buffered,
                         defer: false)
@@ -58,9 +63,31 @@ public final class PanelController: NSObject, NSWindowDelegate {
         NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             guard let self = self, self.panel.isVisible else { return event }
             
+            // If another window in our app is key (e.g. standard Alert), don't intercept keys!
+            if NSApp.keyWindow != nil && NSApp.keyWindow != self.panel {
+                return event
+            }
+            
             if event.keyCode == 53 { // Escape
                 NotificationCenter.default.post(name: NSNotification.Name("EscapePressed"), object: nil)
                 return nil
+            }
+            
+            if self.isSearchActive {
+                if event.keyCode == 125 { // Down arrow
+                    NotificationCenter.default.post(name: NSNotification.Name("MoveSelection"), object: 1)
+                    return nil
+                }
+                if event.keyCode == 126 { // Up arrow
+                    NotificationCenter.default.post(name: NSNotification.Name("MoveSelection"), object: -1)
+                    return nil
+                }
+                if event.keyCode == 36 { // Return
+                    NotificationCenter.default.post(name: NSNotification.Name("PasteSelected"), object: event.modifierFlags.contains(.command))
+                    return nil
+                }
+                // Do not intercept other keys (e.g., Backspace) when searching
+                return event
             }
             
             if event.keyCode == 125 { // Down arrow
@@ -174,6 +201,10 @@ public final class PanelController: NSObject, NSWindowDelegate {
     }
     
     public func windowDidResignKey(_ notification: Notification) {
+        if NSApp.keyWindow != nil && NSApp.keyWindow != panel {
+            // Another window in our app (like the rename alert) took focus
+            return
+        }
         if panel.isVisible { close() }
     }
 }

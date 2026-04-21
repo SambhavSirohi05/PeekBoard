@@ -5,6 +5,7 @@ struct ClipboardRowView: View {
     let indexItem: Int?
     let onPaste: (Bool) -> Void
     let onPinToggle: () -> Void
+    let onRename: () -> Void
     let onDelete: () -> Void
     let onDeleteAllOfType: () -> Void
     
@@ -33,7 +34,7 @@ struct ClipboardRowView: View {
                 .frame(width: 28, height: 28)
             
             VStack(alignment: .leading, spacing: 2) {
-                Text(entry.contentText ?? (entry.contentType == "image" ? "Image" : "Unknown"))
+                Text(entry.alias ?? entry.contentText ?? (entry.contentType == "image" ? "Image" : "Unknown"))
                     .lineLimit(1)
                     .truncationMode(.tail)
                     .font(.system(size: 13))
@@ -71,6 +72,7 @@ struct ClipboardRowView: View {
                     
                     Menu {
                         Button(entry.isPinned ? "Unpin" : "Pin") { onPinToggle() }
+                        Button("Rename") { onRename() }
                         Button("Copy without Pasting") { PasteEngine.shared.copyToClipboard(entry: entry) }
                         Divider()
                         Button("Delete", role: .destructive) { onDelete() }

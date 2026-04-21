@@ -11,6 +11,7 @@ public struct ClipboardEntry: Identifiable, Codable, Equatable, FetchableRecord,
     public var createdAt: Double
     public var isPinned: Bool
     public var pinOrder: Int?
+    public var alias: String?
     
     public enum CodingKeys: String, CodingKey {
         case id
@@ -22,6 +23,7 @@ public struct ClipboardEntry: Identifiable, Codable, Equatable, FetchableRecord,
         case createdAt = "created_at"
         case isPinned = "is_pinned"
         case pinOrder = "pin_order"
+        case alias
     }
     
     public static let databaseTableName = "clipboard_entries"
@@ -35,7 +37,8 @@ public struct ClipboardEntry: Identifiable, Codable, Equatable, FetchableRecord,
         sourceAppName: String? = nil,
         createdAt: Double = Date().timeIntervalSince1970,
         isPinned: Bool = false,
-        pinOrder: Int? = nil
+        pinOrder: Int? = nil,
+        alias: String? = nil
     ) {
         self.id = id
         self.contentText = contentText
@@ -46,5 +49,6 @@ public struct ClipboardEntry: Identifiable, Codable, Equatable, FetchableRecord,
         self.createdAt = createdAt
         self.isPinned = isPinned
         self.pinOrder = pinOrder
+        self.alias = alias
     }
 }
