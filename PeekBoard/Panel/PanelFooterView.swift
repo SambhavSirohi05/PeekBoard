@@ -1,8 +1,6 @@
 import SwiftUI
 
 struct PanelFooterView: View {
-    @ObservedObject var ax = AccessibilityChecker.shared
-    
     var body: some View {
         VStack(spacing: 0) {
             Divider()
@@ -30,9 +28,6 @@ struct PanelFooterView: View {
             }
             .padding(.horizontal, 14)
             .frame(height: 36)
-        }
-        .onAppear {
-            ax.startPolling()
         }
     }
 }
