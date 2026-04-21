@@ -25,13 +25,6 @@ bash build_and_install.sh
 
 ---
 
-### Alternative: Disk Image (.dmg)
-If you prefer a standard installation, you can download a pre-built package.
-
-1. Download the latest `PeekBoard.dmg` from the **Releases** tab.
-2. Open the disk image and drag **PeekBoard** into your **Applications** folder.
-3. Launch PeekBoard and grant the necessary permissions.
-
 *(Note: On the first launch, right-click the app icon and select "Open" to bypass macOS security checks for unsigned independent software.)*
 
 ## Usage & Workflows
