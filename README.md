@@ -35,11 +35,7 @@ PeekBoard integrates cleanly. There is no Dock icon or persistent window—it li
 | --- | --- |
 | `⌥V` | Summon or dismiss the active panel |
 | `↑` / `↓` | Navigate the history list |
-| `Return` | Copy the selected item to your clipboard |
-| `⌘C` | Copy the selected item to your clipboard |
-| `⌘D` | Toggle Pin / Unpin status |
-| `Backspace` | Permanently delete the selected item |
-| `⌘1`–`⌘9` | Instantly copy the 1st through 9th item |
+| `Return or ⌘C` | Copy the selected item to your clipboard |
 | `Escape` | Dismiss the panel |
 
 ## Privacy by Design
