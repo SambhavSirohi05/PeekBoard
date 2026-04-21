@@ -18,6 +18,17 @@ public struct PanelView: View {
                 Text("\(totalItems) items")
                     .font(.system(size: 10, design: .monospaced))
                     .foregroundColor(.secondary)
+                
+                Button(action: {
+                    withAnimation(.easeOut(duration: 0.15)) {
+                        isSearching.toggle()
+                    }
+                }) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(isSearching ? .primary : .secondary)
+                        .padding(.horizontal, 4)
+                }
+                .buttonStyle(PlainButtonStyle())
             }
             .padding(.horizontal, 14)
             .frame(height: 40)
@@ -37,6 +48,9 @@ public struct PanelView: View {
         }
         .frame(width: 340)
         .frame(minHeight: 400, maxHeight: 520)
+        .onChange(of: isSearching) { searching in
+            PanelController.shared.isSearchActive = searching
+        }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("NewClipboardEntry"))) { _ in updateTotal() }
         .onAppear { updateTotal() }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("PanelKeyDown"))) { notification in

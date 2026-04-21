@@ -39,11 +39,15 @@ struct SearchBarView: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
         .onAppear {
-            isFocused = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                isFocused = true
+            }
         }
         .onChange(of: isSearching) { searching in
             if searching {
-                isFocused = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    isFocused = true
+                }
             } else {
                 isFocused = false
             }

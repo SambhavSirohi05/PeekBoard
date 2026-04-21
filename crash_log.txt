@@ -1,0 +1,10 @@
+PeekBoard/DatabaseManager.swift:5: Fatal error: 'try!' expression unexpectedly raised an error: SQLite error 1: trigger "__clipboard_entries_fts_ai" already exists - while executing `CREATE TRIGGER "__clipboard_entries_fts_ai" AFTER INSERT ON "clipboard_entries" BEGIN
+    INSERT INTO "clipboard_entries_fts"("rowid", "content_text", "alias") VALUES (new."id", new."content_text", new."alias");
+END;
+CREATE TRIGGER "__clipboard_entries_fts_ad" AFTER DELETE ON "clipboard_entries" BEGIN
+    INSERT INTO "clipboard_entries_fts"("clipboard_entries_fts", "rowid", "content_text", "alias") VALUES('delete', old."id", old."content_text", old."alias");
+END;
+CREATE TRIGGER "__clipboard_entries_fts_au" AFTER UPDATE ON "clipboard_entries" BEGIN
+    INSERT INTO "clipboard_entries_fts"("clipboard_entries_fts", "rowid", "content_text", "alias") VALUES('delete', old."id", old."content_text", old."alias");
+    INSERT INTO "clipboard_entries_fts"("rowid", "content_text", "alias") VALUES (new."id", new."content_text", new."alias");
+END`

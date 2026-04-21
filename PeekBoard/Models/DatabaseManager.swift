@@ -33,6 +33,24 @@ public final class DatabaseManager {
                 t.column("content_text")
             }
         }
+        
+        migrator.registerMigration("v2") { db in
+            try db.alter(table: "clipboard_entries") { t in
+                t.add(column: "alias", .text)
+            }
+            
+            try db.drop(table: "clipboard_entries_fts")
+            try db.execute(sql: "DROP TRIGGER IF EXISTS __clipboard_entries_fts_ai")
+            try db.execute(sql: "DROP TRIGGER IF EXISTS __clipboard_entries_fts_ad")
+            try db.execute(sql: "DROP TRIGGER IF EXISTS __clipboard_entries_fts_au")
+            
+            try db.create(virtualTable: "clipboard_entries_fts", using: FTS5()) { t in
+                t.synchronize(withTable: "clipboard_entries")
+                t.column("content_text")
+                t.column("alias")
+            }
+        }
+        
         try migrator.migrate(dbWriter)
     }
 
@@ -74,6 +92,16 @@ public final class DatabaseManager {
             try db.execute(
                 sql: "UPDATE clipboard_entries SET is_pinned = ?, pin_order = ? WHERE id = ?",
                 arguments: [isPinned ? 1 : 0, newPinOrder, id]
+            )
+        }
+    }
+    
+    public func updateAlias(_ entry: ClipboardEntry, alias: String?) throws {
+        guard let id = entry.id else { return }
+        try dbWriter.write { db in
+            try db.execute(
+                sql: "UPDATE clipboard_entries SET alias = ? WHERE id = ?",
+                arguments: [alias, id]
             )
         }
     }
