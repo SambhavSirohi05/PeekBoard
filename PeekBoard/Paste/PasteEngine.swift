@@ -37,26 +37,6 @@ public final class PasteEngine {
     }
     
     public func copyToClipboard(entry: ClipboardEntry) {
-        let board = NSPasteboard.general
-        board.clearContents()
-        
-        if let text = entry.contentText {
-            board.setString(text, forType: .string)
-        } else if let imgData = entry.imageThumbnailData {
-            board.setData(imgData, forType: .png)
-        }
-        
-        ClipboardMonitor.shared.ignoreNextChange()
-        NSHapticFeedbackManager.defaultPerformer.perform(.generic, performanceTime: .default)
-        
-        if !entry.isPinned {
-            var updated = entry
-            updated.createdAt = Date().timeIntervalSince1970
-            do {
-                try DatabaseManager.shared.insertOrUpdate(&updated)
-                NotificationCenter.default.post(name: NSNotification.Name("ClipboardEntryUpdated"), object: updated)
-            } catch {}
-        }
+        paste(entry: entry, asPlainText: false)
     }
-    
 }
