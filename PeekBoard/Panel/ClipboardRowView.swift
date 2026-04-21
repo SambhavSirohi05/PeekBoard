@@ -73,7 +73,6 @@ struct ClipboardRowView: View {
                     Menu {
                         Button(entry.isPinned ? "Unpin" : "Pin") { onPinToggle() }
                         Button("Rename") { onRename() }
-                        Button("Copy without Pasting") { PasteEngine.shared.copyToClipboard(entry: entry) }
                         Divider()
                         Button("Delete", role: .destructive) { onDelete() }
                         Button("Delete All of This Type", role: .destructive) { onDeleteAllOfType() }

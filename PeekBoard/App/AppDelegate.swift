@@ -30,8 +30,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NotificationCenter.default.addObserver(forName: NSNotification.Name("OpenSettings"), object: nil, queue: nil) { _ in
             SettingsWindowController.shared.show()
         }
-        
-        showFirstLaunchAlertIfNeeded()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -42,24 +40,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         hotKey = HotKey(key: .v, modifiers: [.option])
         hotKey?.keyDownHandler = {
             PanelController.shared.toggle()
-        }
-    }
-    
-    private func showFirstLaunchAlertIfNeeded() {
-        let key = UserDefaultsKeys.hasCompletedOnboarding
-        if !UserDefaults.standard.bool(forKey: key) {
-            let alert = NSAlert()
-            alert.messageText = "One thing before you start"
-            alert.informativeText = "PeekBoard needs Accessibility access to paste items directly into your apps. Open System Settings → Privacy & Security → Accessibility and add PeekBoard.\n\nYou can still use PeekBoard without it — items will be copied to your clipboard and you press ⌘V yourself."
-            alert.addButton(withTitle: "Open System Settings")
-            alert.addButton(withTitle: "Later")
-            
-            NSApp.activate(ignoringOtherApps: true)
-            let response = alert.runModal()
-            if response == .alertFirstButtonReturn {
-                AccessibilityChecker.shared.openAccessibilitySettings()
-            }
-            UserDefaults.standard.set(true, forKey: key)
         }
     }
 }
