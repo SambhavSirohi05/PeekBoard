@@ -61,15 +61,24 @@ public final class DatabaseManager {
     }
     
     public func updatePinned(_ entry: ClipboardEntry, isPinned: Bool) throws {
+        guard let id = entry.id else { return }
+        
         var copy = entry
         copy.isPinned = isPinned
+        let newPinOrder: Int?
         if isPinned, copy.pinOrder == nil {
-            copy.pinOrder = try nextPinOrder()
+            newPinOrder = try nextPinOrder()
         } else if !isPinned {
-            copy.pinOrder = nil
+            newPinOrder = nil
+        } else {
+            newPinOrder = copy.pinOrder
         }
+        
         try dbWriter.write { db in
-            try copy.update(db)
+            try db.execute(
+                sql: "UPDATE clipboard_entries SET is_pinned = ?, pin_order = ? WHERE id = ?",
+                arguments: [isPinned ? 1 : 0, newPinOrder, id]
+            )
         }
     }
     
