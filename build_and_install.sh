@@ -59,6 +59,11 @@ if [ -f "build/AppIcon.icns" ]; then
     echo "Copied AppIcon.icns"
 fi
 
+if [ -f "github-logo.png" ]; then
+    cp "github-logo.png" "${APP_BUNDLE}/Contents/Resources/github-logo.png"
+    echo "Copied github-logo.png"
+fi
+
 # Copy Assets.car (check Xcode build output first, then installed app)
 if [ -f "build/Release/PeekBoard.app/Contents/Resources/Assets.car" ]; then
     cp "build/Release/PeekBoard.app/Contents/Resources/Assets.car" "${APP_BUNDLE}/Contents/Resources/Assets.car"

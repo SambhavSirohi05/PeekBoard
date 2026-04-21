@@ -11,17 +11,12 @@ struct ClipboardRowView: View {
     
     @Binding var selectedEntryId: Int64?
     
-    @AppStorage(UserDefaultsKeys.panelDensity) var panelDensity: String = "Normal"
-    
+
     @State private var isHovered = false
     @State private var flashGreen = false
     
     var rowHeight: CGFloat {
-        switch panelDensity {
-        case "Compact": return 40
-        case "Expanded": return 68
-        default: return 52
-        }
+        return 52
     }
     
     var isSelected: Bool {

@@ -158,6 +158,8 @@ public final class DatabaseManager {
         try dbWriter.write { db in
             _ = try db.execute(sql: "DELETE FROM clipboard_entries WHERE is_pinned = 0")
         }
+        NotificationCenter.default.post(name: NSNotification.Name("NewClipboardEntry"), object: nil)
+        NotificationCenter.default.post(name: NSNotification.Name("ClipboardEntryUpdated"), object: nil)
     }
     
     public func deleteEntry(_ entry: ClipboardEntry) throws {
