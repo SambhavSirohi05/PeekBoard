@@ -62,7 +62,7 @@ struct ClipboardListView: View {
                                     onDelete: { defaultDelete(entry) }, onDeleteAllOfType: { deleteAll(entry.contentType) },
                                     selectedEntryId: $selectedEntryId
                                 )
-                                .id(entry.id)
+                                .id("p\(entry.id ?? 0)")
                             }
                             Divider().padding(.vertical, 4)
                         }
@@ -79,7 +79,7 @@ struct ClipboardListView: View {
                                 onDelete: { defaultDelete(entry) }, onDeleteAllOfType: { deleteAll(entry.contentType) },
                                 selectedEntryId: $selectedEntryId
                             )
-                            .id(entry.id)
+                            .id("r\(entry.id ?? 0)")
                         }
                     }
                     .padding(.bottom, 8)
@@ -89,8 +89,10 @@ struct ClipboardListView: View {
                 .onChange(of: searchQuery) { _ in loadData() }
                 .onChange(of: selectedEntryId) { newId in
                     if let id = newId {
+                        let isPinned = pinnedEntries.contains(where: { $0.id == id })
+                        let scrollId = isPinned ? "p\(id)" : "r\(id)"
                         withAnimation {
-                            proxy.scrollTo(id, anchor: .center)
+                            proxy.scrollTo(scrollId, anchor: .center)
                         }
                     }
                 }
@@ -143,6 +145,12 @@ struct ClipboardListView: View {
             if searchQuery.isEmpty {
                 recentEntries = try db.fetchRecent()
                 pinnedEntries = try db.fetchPinned()
+                for p in pinnedEntries {
+                    print("[DEBUG] Pinned entry id=\(p.id ?? -1) isPinned=\(p.isPinned) pinOrder=\(p.pinOrder ?? -1) text=\(p.contentText?.prefix(30) ?? "nil")")
+                }
+                for r in recentEntries {
+                    print("[DEBUG] Recent entry id=\(r.id ?? -1) isPinned=\(r.isPinned)")
+                }
             } else {
                 recentEntries = try db.search(query: searchQuery)
                 pinnedEntries = []
@@ -151,7 +159,7 @@ struct ClipboardListView: View {
                 selectedEntryId = first.id
             }
         } catch {
-            print("Fetch error: \\(error)")
+            print("Fetch error: \(error)")
         }
     }
     
@@ -190,8 +198,13 @@ struct ClipboardListView: View {
     private func togglePin(_ entry: ClipboardEntry) {
         do {
             try db.updatePinned(entry, isPinned: !entry.isPinned)
-            loadData()
-        } catch {}
+            withAnimation(.easeInOut(duration: 0.2)) {
+                loadData()
+            }
+            NotificationCenter.default.post(name: NSNotification.Name("ClipboardEntryUpdated"), object: nil)
+        } catch {
+            print("togglePin Error: \(error)")
+        }
     }
     
     private func deleteAll(_ type: String) {

@@ -63,15 +63,11 @@ public final class DatabaseManager {
     public func updatePinned(_ entry: ClipboardEntry, isPinned: Bool) throws {
         guard let id = entry.id else { return }
         
-        var copy = entry
-        copy.isPinned = isPinned
         let newPinOrder: Int?
-        if isPinned, copy.pinOrder == nil {
+        if isPinned {
             newPinOrder = try nextPinOrder()
-        } else if !isPinned {
-            newPinOrder = nil
         } else {
-            newPinOrder = copy.pinOrder
+            newPinOrder = nil
         }
         
         try dbWriter.write { db in

@@ -87,6 +87,7 @@ struct ClipboardRowView: View {
         }
         .padding(.horizontal, 12)
         .frame(height: rowHeight)
+        .contentShape(Rectangle())
         .background(
             ZStack {
                 if flashGreen {
@@ -106,9 +107,11 @@ struct ClipboardRowView: View {
                 isHovered = h
             }
         }
-        .onTapGesture {
-            triggerPaste(plainText: false)
-        }
+        .simultaneousGesture(
+            TapGesture().onEnded {
+                triggerPaste(plainText: false)
+            }
+        )
     }
     
     private func triggerPaste(plainText: Bool) {
